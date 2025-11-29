@@ -7,7 +7,7 @@ async function seedUsers() {
   const adminEmail = "super@admin.com";
   const demoEmail = "user@record.com";
 
-  const hashedPassword = await bcrypt.hash("1234", 10);
+  const hashedPassword = await bcrypt.hash("TrAiL19821127!@#", 10);
 
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
