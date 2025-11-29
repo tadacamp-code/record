@@ -1,0 +1,42 @@
+version: '3.8'  # 使用兼容性较好的版本
+
+services:
+  postgres:
+    image: postgres:15-alpine  # 使用轻量级Alpine镜像
+    container_name: local-postgres  # 容器命名
+    restart: unless-stopped  # 自动重启策略（除非手动停止）
+    
+    # 环境变量配置（本地开发可简化）
+    environment:
+      POSTGRES_USER: postgres  # 开发用数据库用户
+      POSTGRES_PASSWORD: password  # 本地开发密码（生产环境不可用）
+      POSTGRES_DB: app_dev  # 默认数据库名
+      TZ: Asia/Shanghai  # 时区设置
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"  # 强制UTF8编码
+    
+    # 数据持久化配置（Mac专用优化）
+    volumes:
+      - pg_data:/var/lib/postgresql/data  # 使用命名卷持久化数据
+      - ./initdb.d:/docker-entrypoint-initdb.d  # 初始化SQL脚本目录
+    
+    # 端口映射（本地直接访问）
+    ports:
+      - "5432:5432"  # 暴露到localhost
+    
+    # 健康检查（确保服务可用）
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    
+    # 资源限制（适合Mac开发环境）
+    deploy:
+      resources:
+        limits:
+          memory: 2G  # 限制内存使用
+
+volumes:
+  pg_data:  # 命名卷，Docker自动管理位置
+
+# 不需要单独网络配置，使用默认网络即可

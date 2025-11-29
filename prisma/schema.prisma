@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User{
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  password String
+  meals Meal[]
+  role Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role{
+  USER
+  ADMIN
+}
+
+model Food{
+  id Int @id @default(autoincrement())
+  name String @unique
+  calories Float?
+  protein Float?
+  fat Float?
+  carbohydrates Float?
+  fiber Float?
+  sugar Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  category Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  foodServingUnit FoodServingUnit[]
+  meal Meal? @relation(fields: [mealId],references: [id])
+  mealId Int?
+  mealFood MealFood[]
+}
+
+model Category{
+  id Int @id @default(autoincrement())
+  name String @unique
+  foods Food[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServingUnit {
+  id Int @id @default(autoincrement())
+  name String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  FoodServingUnit FoodServingUnit[]
+  mealFood MealFood[]
+}
+
+model FoodServingUnit {
+  id Int @id @default(autoincrement())
+  food Food @relation(fields: [foodId],references: [id])
+  foodId Int
+  servingUnit ServingUnit @relation(fields: [servingUnitId], references: [id])
+  servingUnitId Int
+  grams Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Meal { 
+  id Int @id @default(autoincrement())
+  dateTime DateTime
+  foods Food[]
+  user User @relation(fields: [userId],references: [id])
+  userId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mealFoods MealFood[]
+}
+
+model MealFood {
+  id Int @id @default(autoincrement())
+  food Food @relation(fields: [foodId], references: [id])
+  foodId Int
+  meal Meal @relation(fields: [mealId],references: [id])
+  mealId Int
+  servingUnit ServingUnit @relation(fields: [servingUnitId],references: [id])
+  servingUnitId Int
+  amount Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
