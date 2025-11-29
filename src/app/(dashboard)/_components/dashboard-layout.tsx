@@ -122,9 +122,9 @@ const DashboardLayout = ({ children, session }: DashboardLayoutProps) => {
 
     const filteredRouteGroups = ROUTE_GROUPS.filter((group) => {
         if (userRole === Role.ADMIN){
-            return group.group === "Foods Management";
+            return group.group === "Food Management";
         }else{
-            return group.group === "Meals Management";
+            return group.group === "Meal Management";
         }
     });
 
