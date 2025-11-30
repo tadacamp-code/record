@@ -44,7 +44,7 @@ const updateMeal = async (data: MealSchema) => {
         await db.meal.update({
           where: { id: validatedData.id },
           data: {
-            createdAt: validatedData.dateTime,
+            dateTime: validatedData.dateTime,
           },
         });
 

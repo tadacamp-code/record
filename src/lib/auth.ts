@@ -38,7 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
                 return{
                     id: toStringSafe(user.id),
-                    emai: user.email,
+                    email: user.email,
                     name: user.name,
                     role: user.role,
                 };
