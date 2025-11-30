@@ -101,11 +101,17 @@ const Button = ({
   );
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children, {
-      className: cn(mergedClassName, children.props.className),
+    const child = children as React.ReactElement<Record<string, unknown>>;
+    const childProps = child.props as {
+      className?: string;
+      children?: React.ReactNode;
+    };
+
+    return React.cloneElement(child, {
+      className: cn(mergedClassName, childProps.className),
       "aria-disabled": disabledState,
-      ...props,
-      children: renderContent(children.props.children),
+      ...(props as Record<string, unknown>),
+      children: renderContent(childProps.children),
     });
   }
 
