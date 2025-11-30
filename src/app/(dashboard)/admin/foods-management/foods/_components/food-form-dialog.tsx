@@ -170,7 +170,7 @@ const FoodFormDialog = () => {
                         </div>
                     </FormProvider>
                     <DialogFooter>
-                        <Button type="submit">
+                        <Button type="submit" isLoading={isPending}>
                             {!!selectedFoodId ? "Edit" : "Create"} Food
                         </Button>
                     </DialogFooter>

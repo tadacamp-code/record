@@ -51,7 +51,7 @@ const SignUpForm = () => {
           />
         </div>
 
-        <Button className="w-full">
+        <Button className="w-full" isLoading={signUpMutation.isPending}>
           Sign Up
         </Button>
 

@@ -126,7 +126,7 @@ const MealFormDialog = ({ smallTrigger, session }: MealFormDialogProps) => {
             </div>
           </FormProvider>
           <DialogFooter>
-            <Button type="submit">
+            <Button type="submit" isLoading={isPending}>
               {!!selectedMealId ? "Edit" : "Create"} Meal
             </Button>
           </DialogFooter>

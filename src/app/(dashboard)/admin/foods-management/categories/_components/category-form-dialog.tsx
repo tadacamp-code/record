@@ -101,7 +101,7 @@ const CategoryFormDialog = ({ smallTrigger }: CategoryFormDialogProps) => {
                         />
                     </FormProvider>
                     <DialogFooter>
-                        <Button type="submit">
+                        <Button type="submit" isLoading={isPending}>
                             {/* <Button type="submit"> */}
                                 {!!selectedCategoryId ? "Edit" : "Create"} Category
                             </Button>

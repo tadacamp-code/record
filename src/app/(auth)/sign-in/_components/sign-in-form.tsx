@@ -45,7 +45,7 @@ const SignInForm = () => {
           />
         </div>
 
-        <Button className="w-full">
+        <Button className="w-full" isLoading={signInMutation.isPending}>
           Sign In
         </Button>
 
