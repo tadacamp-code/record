@@ -7,10 +7,13 @@ import {
 import db from "@/lib/db";
 import { executeAction } from "@/lib/executeAction";
 import { toNumberSafe } from "@/lib/utils";
+import { requireRole } from "@/lib/authz";
+import { Role } from "$/generated/prisma";
 
 const createFood = async (data: FoodSchema) => {
   await executeAction({
     actionFn: async () => {
+      await requireRole(Role.ADMIN);
       const validatedData = foodSchema.parse(data);
 
       const food = await db.food.create({
@@ -44,6 +47,7 @@ const createFood = async (data: FoodSchema) => {
 const updateFood = async (data: FoodSchema) => {
   await executeAction({
     actionFn: async () => {
+      await requireRole(Role.ADMIN);
       const validatedData = foodSchema.parse(data);
       if (validatedData.action === "update") {
         await db.food.update({
@@ -83,6 +87,7 @@ const updateFood = async (data: FoodSchema) => {
 const deleteFood = async (id: number) => {
   await executeAction({
     actionFn: async () => {
+      await requireRole(Role.ADMIN);
       await db.foodServingUnit.deleteMany({
         where: { foodId: id },
       });

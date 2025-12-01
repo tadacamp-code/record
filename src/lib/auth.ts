@@ -57,6 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 cloneToken.id = toNumberSafe(user.id);
                 cloneToken.name = user?.name;
                 cloneToken.role = user?.role;
+                cloneToken.email = user?.email;
             }
             return cloneToken;
         },
@@ -67,6 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 clonedSession.user.id = toStringSafe(token.id);
                 clonedSession.user.name = token.name;
                 clonedSession.user.role = token.role;
+                clonedSession.user.email = toStringSafe(token.email);
             }
 
             return clonedSession;

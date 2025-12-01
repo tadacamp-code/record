@@ -7,15 +7,20 @@ import {
 import db from "@/lib/db";
 import { executeAction } from "@/lib/executeAction";
 import { toNumberSafe } from "@/lib/utils";
+import { requireAuth, requireUserMatch } from "@/lib/authz";
 
 const createMeal = async (data: MealSchema) => {
   await executeAction({
     actionFn: async () => {
-      const validatedData = mealSchema.parse(data);
+      const session = await requireAuth();
+      const validatedData = mealSchema.parse({
+        ...data,
+        userId: session.user.id,
+      });
 
       const meal = await db.meal.create({
         data: {
-          userId: toNumberSafe(validatedData.userId),
+          userId: toNumberSafe(session.user.id),
           dateTime: validatedData.dateTime,
         },
       });
@@ -39,8 +44,24 @@ const createMeal = async (data: MealSchema) => {
 const updateMeal = async (data: MealSchema) => {
   await executeAction({
     actionFn: async () => {
-      const validatedData = mealSchema.parse(data);
+      const session = await requireAuth();
+      const validatedData = mealSchema.parse({
+        ...data,
+        userId: session.user.id,
+      });
+
       if (validatedData.action === "update") {
+        const existingMeal = await db.meal.findUnique({
+          where: { id: validatedData.id },
+          select: { userId: true },
+        });
+
+        if (!existingMeal) {
+          throw new Error("Meal not found");
+        }
+
+        await requireUserMatch(existingMeal.userId);
+
         await db.meal.update({
           where: { id: validatedData.id },
           data: {
@@ -72,6 +93,18 @@ const updateMeal = async (data: MealSchema) => {
 const deleteMeal = async (id: number) => {
   await executeAction({
     actionFn: async () => {
+      const session = await requireAuth();
+      const mealOwner = await db.meal.findUnique({
+        where: { id },
+        select: { userId: true },
+      });
+
+      if (!mealOwner) {
+        throw new Error("Meal not found");
+      }
+
+      await requireUserMatch(mealOwner.userId);
+
       await db.mealFood.deleteMany({
         where: { mealId: id },
       });

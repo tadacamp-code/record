@@ -3,35 +3,44 @@
 import { ServingUnitSchema } from "@/app/(dashboard)/admin/foods-management/serving-units/_types/schema";
 import db from "@/lib/db";
 import { executeAction } from "@/lib/executeAction";
+import { requireRole } from "@/lib/authz";
+import { Role } from "$/generated/prisma";
 
 const createServingUnit = async (data: ServingUnitSchema) => {
   await executeAction({
-    actionFn: () =>
-      db.servingUnit.create({
+    actionFn: async () => {
+      await requireRole(Role.ADMIN);
+      await db.servingUnit.create({
         data: {
           name: data.name,
         },
-      }),
+      });
+    },
   });
 };
 
 const updateServingUnit = async (data: ServingUnitSchema) => {
   if (data.action === "update") {
     await executeAction({
-      actionFn: () =>
-        db.servingUnit.update({
+      actionFn: async () => {
+        await requireRole(Role.ADMIN);
+        await db.servingUnit.update({
           where: { id: data.id },
           data: {
             name: data.name,
           },
-        }),
+        });
+      },
     });
   }
 };
 
 const deleteServingUnit = async (id: number) => {
   await executeAction({
-    actionFn: () => db.servingUnit.delete({ where: { id } }),
+    actionFn: async () => {
+      await requireRole(Role.ADMIN);
+      await db.servingUnit.delete({ where: { id } });
+    },
   });
 };
 
